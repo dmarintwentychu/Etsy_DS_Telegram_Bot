@@ -1,6 +1,6 @@
 from web_scrapping_etsy import etsyP
 
-t = etsyP("https://www.etsy.com/es/listing/912901186/lion-stuffed-toy-amigurumi-lion-good?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=handmade+gift&ref=sr_gallery-1-14&pro=1&etp=1&organic_search_click=1")
+t = etsyP("https://www.etsy.com/es/listing/1535853173/estatua-de-la-aparicion-de-zoro-ashura?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=zoro&ref=sr_gallery-1-1&frs=1&organic_search_click=1")
 
 print(f"Está hecho a mano? {t.isHM}")
 print(f"Gastos de envio: {t.shippingCosts}")
