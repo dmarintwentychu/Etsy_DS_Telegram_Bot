@@ -45,7 +45,8 @@ class etsyP:
         
         if tree.xpath(f'//text()[contains(.,"{pattern}")]'):
             self.isHM = True
-        self.isHM = False
+        else:
+            self.isHM = False
 
     def search_price(self,tree):
 
