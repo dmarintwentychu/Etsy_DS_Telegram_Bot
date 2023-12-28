@@ -9,4 +9,4 @@ result = im.compare_images(image1_path, image2_path)
 
 print(f"Las imágenes contienen el mismo objeto en un {result}% de acierto")
 
-im.deleteall("./")
+#im.deleteall("./imgtest/")
