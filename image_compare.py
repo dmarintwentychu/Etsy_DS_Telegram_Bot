@@ -54,3 +54,27 @@ def deleteall(input_folder):
 
         if os.path.isfile(input_path) and any(filename.lower().endswith(ext) for ext in ['.png', '.bmp', '.gif', '.tiff', '.jpeg', '.jpg', '.avif', '.webp']):
             os.remove(input_path)
+
+
+def compare_images_color_histogram(image_path1, image_path2):
+    # Cargar imágenes
+    img1 = cv2.imread(image_path1)
+    img2 = cv2.imread(image_path2)
+
+    # Convertir imágenes a espacio de color HSV
+    hsv1 = cv2.cvtColor(img1, cv2.COLOR_BGR2HSV)
+    hsv2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
+
+    # Calcular histogramas de color
+    hist1 = cv2.calcHist([hsv1], [0, 1], None, [180, 256], [0, 180, 0, 256])
+    hist2 = cv2.calcHist([hsv2], [0, 1], None, [180, 256], [0, 180, 0, 256])
+
+    # Normalizar los histogramas
+    cv2.normalize(hist1, hist1, 0, 1, cv2.NORM_MINMAX)
+    cv2.normalize(hist2, hist2, 0, 1, cv2.NORM_MINMAX)
+
+    # Calcular la similitud entre los histogramas (usando la correlación)
+    similarity = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
+
+    return similarity
+    

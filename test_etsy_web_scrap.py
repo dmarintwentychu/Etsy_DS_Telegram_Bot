@@ -1,10 +1,13 @@
 from web_scrapping_etsy import etsyP
 
-t = etsyP("https://www.etsy.com/es/listing/1624460555/soporte-hollow-knight-para-todos-los?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=figura&ref=sr_gallery-1-20&pro=1&frs=1&bes=1&organic_search_click=1")
+t = etsyP("https://www.etsy.com/es/listing/1581587356/sudadera-con-capucha-hollow-knight-de?click_key=f589164a98f6a93900d4856977ab0a977b8d1042%3A1581587356&click_sum=0ca073c4&ref=landingpage_similar_listing_bot-4&pro=1&sts=1&listing_id=1581587356&listing_slug=sudadera-con-capucha-hollow-knight-de")
 
 print(f"Está hecho a mano? {t.isHM}")
 print(f"Gastos de envio: {t.shippingCosts}")
 print(f"Precio: {t.price}")
 print(f"Precio Total {t.totalPriece}")
+print(f"Rating: {t.rating}")
+print(f"Numero de Reseñas: {t.nReviews}")
+print(f"Numero de Reseñas en la tienda {t.nShopRating}")
+print(f"Descripción del Producto: \n {t.description}")
 
-#print(is_hand_made(setwp("https://www.etsy.com/es/listing/1623298851/figura-de-estatua-de-one-piece-roronoa?click_key=858f33bdf5b0876eb96a4acc487b5409cfd4c295%3A1623298851&click_sum=ee803e7d&ref=hp_rv-1")))
