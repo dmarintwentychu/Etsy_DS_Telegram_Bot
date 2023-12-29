@@ -75,3 +75,8 @@ def compare_images_color_histogram(image_path1, image_path2):
     similarity = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
 
     return similarity
+
+
+def download_img_etsy():
+
+    return
