@@ -25,26 +25,32 @@ class aliP:
         self.tree = tree
 
 
-
 def searchbar_Aliexpress(description):
-
-    return 
-
-def get_url_Products(url):
     
-    response = requests.get(url)
+    basic_url  = 'https://www.aliexpress.com/wholesale?catId=0&SearchText='
+    basic_url = basic_url + description
+    basic_url = basic_url.replace(" ", "%20")
 
-    if response.status_code != 200:
-          return False
-        
-    tree = html.fromstring(response.content)
+    return basic_url
 
-    return tree.xpath("//div[@class='list--galleryWrapper--29HRJT4']//a[@class='multi--container--1UZxxHY cards--card--3PJxwBm search-card-item']/@href")
+#Devuelve como máximo max_pages*10 links
+def get_url_products(url, max_pages=1):
+    all_links = []
 
+    for page in range(1, max_pages + 1):
+        current_url = f"{url}&page={page}"  # Ajusta esto según la estructura de la URL con paginación
 
-    
+        response = requests.get(current_url)
 
-p = get_url_Products("https://es.aliexpress.com/w/wholesale-Estatua-de-la-apariciónn-de-Zoro-Ashura.html")
+        if response.status_code != 200:
+            print(f"Error en la solicitud para la página {page}: {response.status_code}")
+            break
 
-print(len(p))
-print(p)
+        pattern = 'href="(//es\.aliexpress\.com/item/.*?)"'
+        exp = re.compile(pattern)
+
+        links = exp.findall(str(response.content))
+        all_links.extend(links)
+
+    return all_links
+

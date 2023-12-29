@@ -46,7 +46,6 @@ def compare_images(image_path1, image_path2):
     print(len(matches))
     return (len(matches)*100) / 500
 
-
 def deleteall(input_folder):
 
    for filename in os.listdir(input_folder):
@@ -54,7 +53,6 @@ def deleteall(input_folder):
 
         if os.path.isfile(input_path) and any(filename.lower().endswith(ext) for ext in ['.png', '.bmp', '.gif', '.tiff', '.jpeg', '.jpg', '.avif', '.webp']):
             os.remove(input_path)
-
 
 def compare_images_color_histogram(image_path1, image_path2):
     # Cargar imágenes
@@ -77,4 +75,3 @@ def compare_images_color_histogram(image_path1, image_path2):
     similarity = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
 
     return similarity
-    

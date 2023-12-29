@@ -6,6 +6,7 @@ class etsyP:
 
     url = ""
     tree = ""
+    content = ""
     isHM = False
     price = 0 
     shippingCosts = 0
@@ -40,6 +41,7 @@ class etsyP:
         if response.status_code != 200:
             self.tree =  False
         
+        self.content = response.content
         tree = html.fromstring(response.content)
 
         self.tree = tree
@@ -84,7 +86,7 @@ class etsyP:
 
         price_elem = tree.xpath('//div[@class="wt-ml-xs-1"]/span[@class="currency-value"]/text()')
 
-        if price_elem is not None:
+        if price_elem:
             
             cadena_limpia = ''.join(c for c in price_elem[0].strip() if c.isdigit() or c in {',', '.'})
 
@@ -99,7 +101,7 @@ class etsyP:
 
         link_element = tree.xpath('//a[@class="wt-text-link-no-underline review-stars-text-decoration-none" and @href="#reviews"]')
 
-        if link_element is not None:
+        if link_element:
             span_element = link_element[0].xpath('.//span[@class="wt-screen-reader-only"]')
             if span_element:
                 stars_text = span_element[0].text
@@ -108,20 +110,24 @@ class etsyP:
 
     def search_nReviews(self,tree):
         
-        reviews_elem = tree.xpath('//span[@class="wt-badge wt-badge--statusInformational wt-ml-xs-2"]')[0]
+        reviews_elem = tree.xpath('//span[@class="wt-badge wt-badge--statusInformational wt-ml-xs-2"]')
 
-        if reviews_elem is not None:
-            self.nReviews = int(reviews_elem.text)
+        if reviews_elem:
+            self.nReviews = int(reviews_elem[0].text)
         else:
             self.nReviews = False
     def search_nShopRating(self,tree):
+        
+        pattern = r'\s*([\d,]+)\s*rese.*as de la tienda\s*'
+        matches = re.search(pattern, str(self.content), re.DOTALL | re.IGNORECASE)
 
-        reviews_elem = tree.xpath('//span[@class="wt-badge wt-badge--statusInformational wt-ml-xs-2 wt-nowrap"]')[0]
-
-        if reviews_elem is not None:
-            self.nShopRating = int(reviews_elem.text)
+        if matches:
+            reviews_text = matches.group(1).strip()
+            self.nShopRating = reviews_text
         else:
             self.nShopRating = False
+
+
     def search_description(self,tree):
 
         self.description = tree.xpath('//h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text_content().strip()
