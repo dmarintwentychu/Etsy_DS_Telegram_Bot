@@ -43,8 +43,13 @@ def compare_images(image_path1, image_path2):
 
     matches = sorted(matches, key=lambda x: x.distance)
     
-    print(len(matches))
-    return (len(matches)*100) / 500
+    z = (len(matches)) / 500
+    print(z)
+    if z > 0.6:
+        return 1
+    else:
+        return 0
+
 
 def deleteall(input_folder):
 

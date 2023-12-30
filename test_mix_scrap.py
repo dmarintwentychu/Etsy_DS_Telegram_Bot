@@ -18,4 +18,6 @@ print(ali.searchbar_format_Aliexpress(t.description))
 
 links = ali.get_url_products(t.description)
 
-ali.getInfoProducts(links,t)
+aliPList = ali.getInfoProducts(links,t)
+for a in aliPList:
+    a.print()

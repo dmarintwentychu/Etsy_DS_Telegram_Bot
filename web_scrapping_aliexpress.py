@@ -102,7 +102,8 @@ class aliP:
             self.description = False
         
         driver.quit()
-
+    
+    def print(self):
         print("------------------------------------")
         print(f"Gastos de envio: {self.shippingCosts}")
         print(f"Precio: {self.price}")
@@ -110,6 +111,7 @@ class aliP:
         print(f"Rating: {self.rating}")
         print(f"Numero de Reseñas del producto: {self.nReviews}")
         print(f"Descripción del Producto: \n {self.description}")
+        print(f"url de aliexpress: {self.url}")
         print("------------------------------------")
 
 
@@ -118,10 +120,8 @@ def getInfoProducts(links,etsy):
     aliPList = []
     for l in links:
         ali = aliP(l)
-        comp = min(etsy.imgs,ali.imgs)
-        z = getMatchProducts()
-        print(z)
-        if z > comp:
+
+        if getMatchProducts() > 1:
             aliPList.append(ali)
             aliPList[-1].get_values()
         ic.deleteall("./imgcacheali")
@@ -129,6 +129,8 @@ def getInfoProducts(links,etsy):
     ic.deleteall("./imgcacheetsy")
 
     print(len(aliPList))
+
+    return aliPList
 
 def getMatchProducts():
 
@@ -138,7 +140,7 @@ def getMatchProducts():
 
     for e in etimgl:
         for a in alimgl:
-            matches += ic.compare_images_color_histogram(e,a)
+            matches += ic.compare_images(e,a)
 
     return matches
 
@@ -167,6 +169,7 @@ def get_url_products(description):
 
     url = searchbar_format_Aliexpress(description)
     #url = description
+
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     #options.add_argument('--disable-gpu') 
@@ -175,7 +178,6 @@ def get_url_products(description):
     driver.get(url)
     driver.implicitly_wait(8)
 
-    #driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     actions = ActionChains(driver)
 
     for i in range(40):
@@ -185,5 +187,4 @@ def get_url_products(description):
 
     link_hrefs = [element.get_attribute('href') for element in link_elements]
 
-    print(len(link_hrefs))
     return link_hrefs[:10]
