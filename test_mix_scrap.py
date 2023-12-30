@@ -1,8 +1,9 @@
 import web_scrapping_etsy as e
 import web_scrapping_aliexpress as ali
 from web_scrapping_etsy import etsyP
+import image_compare as ic
 
-t = etsyP("https://www.etsy.com/es/listing/1562368070/regalos-para-fanaticos-del-anime?click_key=c733a327d23a50d1a38f5e1efb023d5772619fbd%3A1562368070&click_sum=105d4d63&ref=internal_similar_listing_bot-3&pro=1&frs=1&listing_id=1562368070&listing_slug=regalos-para-fanaticos-del-anime")
+t = etsyP("https://www.etsy.com/es/listing/1535853173/estatua-de-la-aparicion-de-zoro-ashura?click_key=3694a72da918749fef41800d3bc29e67dba9d0df%3A1535853173&click_sum=36d9f1a5&ref=hp_rv-5&frs=1")
 
 print(f"Está hecho a mano? {t.isHM}")
 print(f"Gastos de envio: {t.shippingCosts}")
@@ -15,5 +16,6 @@ print(f"Descripción del Producto: \n {t.description}")
 
 print(ali.searchbar_format_Aliexpress(t.description))
 
-links = ali.get_url_products(t.description, max_pages=2)
-ali.getInfoProducts(links)
+links = ali.get_url_products(t.description)
+
+ali.getInfoProducts(links,t)

@@ -2,3 +2,6 @@ opencv-python
 Pillow
 pillow-avif-plugin
 lxml
+selenium
+spacy
+urllib3

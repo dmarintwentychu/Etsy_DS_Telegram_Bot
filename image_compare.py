@@ -74,9 +74,14 @@ def compare_images_color_histogram(image_path1, image_path2):
     # Calcular la similitud entre los histogramas (usando la correlación)
     similarity = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
 
+    if similarity >= 0.9:
+        similarity = 1
+    else:
+        similarity = 0
+
     return similarity
 
+def get_files_in_directory(directory_path):
+    file_paths = [os.path.join(directory_path, file) for file in os.listdir(directory_path)]
+    return file_paths
 
-def download_img_etsy():
-
-    return

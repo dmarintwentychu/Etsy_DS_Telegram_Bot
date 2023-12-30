@@ -16,9 +16,9 @@ class etsyP:
     nReviews = 0
     nShopRating = 0
     description = ""
-    images = []
-    nImgMatches = 0
-
+    imgs = 0
+    ImgMatches = 0
+    
 
 
     def __init__(self, url):
@@ -147,4 +147,5 @@ class etsyP:
         for url in urls_imagenes:
             urllib.request.urlretrieve(url, f'./imgcacheetsy/img{i}.jpg')
             i+=1
+        self.imgs = len(urls_imagenes)
         
