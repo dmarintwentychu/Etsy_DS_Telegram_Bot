@@ -37,7 +37,9 @@ class aliP:
         self.content = response.content
         pattern = r'"imagePathList":\s*\[([^]]*)\],\s*"image640PathList"'        
         exp = re.compile(pattern)
-        urls_imagenes = exp.findall(str(self.content))[0].replace("\"","").split(",")
+        urls_imagenes = (exp.findall(str(self.content))[0]
+                         .replace("\"","")
+                         .split(","))
         urls_imagenes = [url_imagene.strip() for url_imagene in urls_imagenes]
         
         i = 0
@@ -59,7 +61,9 @@ class aliP:
 
             price_element = driver.find_element(By.XPATH, '//div[@class="es--wrap--erdmPRe notranslate"]')
         
-            self.price = float(price_element.text.replace("€","").replace(",","."))
+            self.price = float(price_element.text
+                               .replace("€","")
+                               .replace(",","."))
 
         except NoSuchElementException:
             self.price = False
@@ -71,7 +75,8 @@ class aliP:
 
             
             self.shippingCosts = (shipping_info.split("Envío:")[1].split("€")[0]
-                                            .strip().replace(",","."))
+                                            .strip()
+                                            .replace(",","."))
 
         except NoSuchElementException:
 
@@ -89,7 +94,9 @@ class aliP:
         
         try:
             strong_element = driver.find_element(By.XPATH, '//a[@href="#nav-review"]')
-            self.nReviews = strong_element.text.strip().split()[0]
+            self.nReviews = (strong_element.text
+                             .strip()
+                             .split()[0])
             
         except NoSuchElementException:
             self.nReviews = False
