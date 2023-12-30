@@ -1,8 +1,10 @@
 import re
 import requests
 from lxml import html
-
+import time
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import urllib.request
@@ -15,7 +17,6 @@ class aliP:
     totalPriece = 0 #Con gastos de envío
     rating = 0
     nReviews = 0
-    images = []
 
     def __init__(self, url):
         self.url = url
@@ -51,15 +52,17 @@ class aliP:
 
         driver.get(self.url)
 
-        driver.implicitly_wait(2)
-
-        price_element = driver.find_element(By.XPATH, '//div[@class="es--wrap--erdmPRe notranslate"]')
-        
-        self.price = float(price_element.text.replace("€","").replace(",","."))
-
-        driver.implicitly_wait(2)
-
         try:
+            driver.implicitly_wait(2)
+
+            price_element = driver.find_element(By.XPATH, '//div[@class="es--wrap--erdmPRe notranslate"]')
+        
+            self.price = float(price_element.text.replace("€","").replace(",","."))
+
+        except NoSuchElementException:
+            self.price = False
+
+        try:            
             strong_element = driver.find_element(By.XPATH, '//div[@class="shipping--wrap--Dhb61O7"]//strong[contains(text(), "Envío:")]')
 
             shipping_info = strong_element.text
@@ -69,14 +72,29 @@ class aliP:
                                             .strip().replace(",","."))
 
         except NoSuchElementException:
-            # Si no se encuentra el elemento, imprimir un mensaje indicando que no se encontró
-            print("No se encontró el elemento de envío.")
+
             self.shippingCosts = False
+
+        try:            
+            strong_element = driver.find_element(By.XPATH, '//div[@class="reviewer--wrap--sPGWrNq"]/strong')
+
+            self.rating = float(strong_element.text)
+            
+        except NoSuchElementException:
+            self.rating = False
         
+        try:
+            strong_element = driver.find_element(By.XPATH, '//a[@href="#nav-review"]')
+            self.nReviews = strong_element.text.strip().split()[0]
+            
+        except NoSuchElementException:
+            self.nReviews = False
+
+
         driver.quit()
 
 
-ali = aliP("https://es.aliexpress.com/item/1005004549580517.html?spm=a2g0o.detail.0.0.6821gSwRgSwR1Y&gps-id=pcDetailTopMoreOtherSeller&scm=1007.40000.327270.0&scm_id=1007.40000.327270.0&scm-url=1007.40000.327270.0&pvid=8fbba2f6-d6f6-4780-9c6e-86e26c7415f6&_t=gps-id:pcDetailTopMoreOtherSeller,scm-url:1007.40000.327270.0,pvid:8fbba2f6-d6f6-4780-9c6e-86e26c7415f6,tpp_buckets:668%232846%238113%231998&pdp_npi=4%40dis%21EUR%215.39%215.39%21%21%215.83%21%21%40211b618e17038634812338943e9302%2112000029575396713%21rec%21ES%214776018355%21AB&search_p4p_id=202312290724413987365388586586647121_2#nav-specification")
+#ali = aliP("https://es.aliexpress.com/item/1005005878900854.html?spm=a2g0o.tm1000003765.3832216530.3.3bc638f2mLBOyn&pdp_ext_f=%7B%22ship_from%22:%22CN%22,%22sku_id%22:%2212000035739136644%22%7D&scm=1007.39065.355422.0&scm_id=1007.39065.355422.0&scm-url=1007.39065.355422.0&pvid=399d3826-8d67-4910-93bd-a8b96a744f69&utparam=%257B%2522process_id%2522%253A%2522standard-item-process-2%2522%252C%2522x_object_type%2522%253A%2522product%2522%252C%2522pvid%2522%253A%2522399d3826-8d67-4910-93bd-a8b96a744f69%2522%252C%2522belongs%2522%253A%255B%257B%2522floor_id%2522%253A%252240478212%2522%252C%2522id%2522%253A%252232680171%2522%252C%2522type%2522%253A%2522dataset%2522%257D%252C%257B%2522id_list%2522%253A%255B%25221000543522%2522%255D%252C%2522type%2522%253A%2522gbrain%2522%257D%255D%252C%2522pageSize%2522%253A%252218%2522%252C%2522language%2522%253A%2522es%2522%252C%2522scm%2522%253A%25221007.39065.355422.0%2522%252C%2522countryId%2522%253A%2522ES%2522%252C%2522scene%2522%253A%2522SD-Waterfall%2522%252C%2522tpp_buckets%2522%253A%252221669%25230%2523265320%25237_21669%25234190%252319165%2523787_29065%25230%2523355422%252310%2522%252C%2522x_object_id%2522%253A%25221005005878900854%2522%257D&pdp_npi=3%40dis%21EUR%21%E2%82%AC%203%2C64%21%E2%82%AC%200%2C99%21%21%21%21%21%40211b600e17038942960282114e0c4a%2112000035739136644%21gdf%21%21&aecmd=true")
 
 def getInfoProducts(links):
 
@@ -96,27 +114,30 @@ def searchbar_format_Aliexpress(description):
 
     return basic_url
 
-#Devuelve como máximo max_pages*10 links lo suyo es 2 páginas
-def get_url_products(description, max_pages=1):
+#Devuelve como máximo 60 links
+def get_url_products(description):
 
-    url = searchbar_format_Aliexpress(description)
+    #url = searchbar_format_Aliexpress(description)
+    url = description
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu') 
+    driver = webdriver.Chrome(options=options)
 
-    all_links = []
+    driver.get(url)
+    driver.implicitly_wait(8)
 
-    for page in range(1, max_pages + 1):
-        current_url = f"{url}&page={page}"  # Ajusta esto según la estructura de la URL con paginación
+    #driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    actions = ActionChains(driver)
 
-        response = requests.get(current_url)
+    for i in range(40):
+        actions.send_keys(Keys.PAGE_DOWN).perform()
+    time.sleep(3)
+    link_elements = driver.find_elements(By.XPATH, "//a[@class='multi--container--1UZxxHY cards--card--3PJxwBm search-card-item']")
 
-        if response.status_code != 200:
-            print(f"Error en la solicitud para la página {page}: {response.status_code}")
-            break
+    link_hrefs = [element.get_attribute('href') for element in link_elements]
 
-        pattern = 'href="(//es\.aliexpress\.com/item/.*?)"'
-        exp = re.compile(pattern)
+    print(link_hrefs)
+    return
 
-        links = exp.findall(str(response.content))
-        all_links.extend(links)
-
-    return all_links
-
+get_url_products("https://www.aliexpress.com/wholesale?catId=0&SearchText=Zoro")
