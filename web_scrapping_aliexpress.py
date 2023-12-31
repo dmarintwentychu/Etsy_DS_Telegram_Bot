@@ -64,7 +64,6 @@ class aliP:
             self.price = float(price_element.text
                                .replace("€","")
                                .replace(",","."))
-
         except NoSuchElementException:
             self.price = False
 
@@ -72,12 +71,10 @@ class aliP:
             strong_element = driver.find_element(By.XPATH, '//div[@class="shipping--wrap--Dhb61O7"]//strong[contains(text(), "Envío:")]')
 
             shipping_info = strong_element.text
-
             
             self.shippingCosts = (shipping_info.split("Envío:")[1].split("€")[0]
                                             .strip()
                                             .replace(",","."))
-
         except NoSuchElementException:
 
             self.shippingCosts = False
@@ -88,7 +85,6 @@ class aliP:
             strong_element = driver.find_element(By.XPATH, '//div[@class="reviewer--wrap--sPGWrNq"]/strong')
 
             self.rating = float(strong_element.text)
-            
         except NoSuchElementException:
             self.rating = False
         
@@ -97,7 +93,6 @@ class aliP:
             self.nReviews = (strong_element.text
                              .strip()
                              .split()[0])
-            
         except NoSuchElementException:
             self.nReviews = False
 
@@ -179,7 +174,7 @@ def get_url_products(description):
 
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
-    #options.add_argument('--disable-gpu') 
+    options.add_argument('--disable-gpu') 
     driver = webdriver.Chrome(options=options)
 
     driver.get(url)
@@ -189,7 +184,7 @@ def get_url_products(description):
 
     for i in range(40):
         actions.send_keys(Keys.PAGE_DOWN).perform()
-    time.sleep(5)
+    time.sleep(2)
     link_elements = driver.find_elements(By.XPATH, "//a[@class='multi--container--1UZxxHY cards--card--3PJxwBm search-card-item']")
 
     link_hrefs = [element.get_attribute('href') for element in link_elements]
