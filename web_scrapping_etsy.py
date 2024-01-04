@@ -135,7 +135,7 @@ class etsyP:
 
     def search_description(self):
 
-        self.description = self.tree.xpath('//h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text_content().strip()
+        self.description = self.tree.xpath('//div[@class="wt-mb-xs-1"]/h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text_content().strip()
 
     def download_img_etsy(self):
         
