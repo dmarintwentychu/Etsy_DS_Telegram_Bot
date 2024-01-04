@@ -31,17 +31,6 @@ def comando_guardar_url(message):
 
     bot.reply_to(message, f"URL guardada: {url}")
 
-@bot.message_handler(commands=["comprobarurl"])
-def comando_comprobar_url(message):
-    # Comprobar si el usuario tiene una URL guardada
-    user_id = message.from_user.id
-    saved_url = comprobar_url(user_id)
-
-    if saved_url:
-        bot.reply_to(message, f"URL guardada: {saved_url}")
-    else:
-        bot.reply_to(message, "No se ha guardado ninguna URL")
-
 @bot.message_handler(content_types=["text"])
 def mensaje (message):
     if message.text.startswith("/"):
