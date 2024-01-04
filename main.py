@@ -4,6 +4,8 @@ from web_scrapping_etsy import etsyP
 
 bot = telebot.TeleBot("6803354093:AAH9cdZtNjcNyKIECnGb2SR_Earm97PIyAE")
 
+
+
 def guardar_url(user_id, url):
     objeto = etsyP(url)
 
@@ -17,10 +19,11 @@ def comando_guardar_url(message):
     url = message.text.replace("/guardarurl ", "")
 
     # Guardar la URL utilizando la función
+
     guardar_url(message.from_user.id, url)
 
     # Imprimir la URL en el terminal
-    #print(f"URL guardada para el usuario {message.from_user.id}: {url}")
+    print(f"URL guardada para el usuario {message.from_user.id}: {url}")
 
     bot.reply_to(message, f"URL guardada: {url}")
 
