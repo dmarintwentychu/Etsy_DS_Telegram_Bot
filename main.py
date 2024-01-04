@@ -20,9 +20,15 @@ def comando_guardar_url(message):
     guardar_url(message.from_user.id, url)
 
     # Imprimir la URL en el terminal
-    print(f"URL guardada para el usuario {message.from_user.id}: {url}")
+    #print(f"URL guardada para el usuario {message.from_user.id}: {url}")
 
     bot.reply_to(message, f"URL guardada: {url}")
+
+@bot.message_handler(commands=["stop"])
+def comando_stop(message):
+    bot.reply_to(message, "Deteniendo el bot...")
+    # Finalizar el bot
+    bot.stop_polling()
 
 @bot.message_handler(content_types=["text"])
 def mensaje(message):
@@ -31,11 +37,7 @@ def mensaje(message):
     else:
         bot.reply_to(message, "Texto recibido") 
 
-@bot.message_handler(commands=["stop"])
-def comando_stop(message):
-    bot.reply_to(message, "Deteniendo el bot...")
-    # Finalizar el bot
-    bot.stop_polling()
+
 
 if __name__ == "__main__":
     print('Iniciando el Bot')
