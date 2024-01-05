@@ -3,7 +3,7 @@ import web_scrapping_aliexpress as ali
 from web_scrapping_etsy import etsyP
 import image_compare as ic
 
-t = etsyP("https://www.etsy.com/es/listing/1535853173/estatua-de-la-aparicion-de-zoro-ashura?click_key=3694a72da918749fef41800d3bc29e67dba9d0df%3A1535853173&click_sum=36d9f1a5&ref=hp_rv-5&frs=1")
+t = etsyP("https://www.etsy.com/es/listing/1535853173/estatua-de-la-aparicion-de-zoro-ashura")
 
 print(f"Está hecho a mano? {t.isHM}")
 print(f"Gastos de envio: {t.shippingCosts}")

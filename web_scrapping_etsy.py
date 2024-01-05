@@ -3,10 +3,19 @@ import requests
 import urllib.request
 from lxml import html
 
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from time import sleep
+
 class etsyP:
 
     url = ""
-    tree = ""
+    driver = 0
     content = ""
     isHM = False
     price = 0 
@@ -20,15 +29,32 @@ class etsyP:
     ImgMatches = 0
     
 
-
     def __init__(self, url):
         self.url = url
-        self.setTree(url)
-        if self.tree is None:
-            print("Error, no se ha encontrado la página")
+                
+        options = webdriver.ChromeOptions()
+        options.add_argument('---incognito')
+        options.add_argument('--disable-gpu')
+        #options.add_argument('--headless')
+
+        self.driver = webdriver.Chrome(options=options)
+
+        wait = WebDriverWait(self.driver, 10)
+        block = True
+        while(block):
+            try:
+                self.driver.get(self.url)
+                self.driver.minimize_window()
+                self.driver.implicitly_wait(4)
+                self.driver.refresh()
+                self.driver.implicitly_wait(10)
+                boton = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@class='wt-btn wt-btn--filled wt-mb-xs-0']")))
+                boton.click()
+                block = False
+            except TimeoutException:
+                print("No hay boton(?)")
 
         self.is_hand_made()
-
         self.search_price()
         self.search_Shipping_Costs()
         self.totalPriece = self.price + self.shippingCosts
@@ -36,106 +62,76 @@ class etsyP:
         self.search_nReviews()
         self.search_nShopRating()
         self.search_description()
-        self.download_img_etsy()
-
-
-    def setTree(self,url):
-
-        response = requests.get(url)
-
-        if response.status_code != 200:
-            self.tree =  False
-        
-        self.content = response.content
-        tree = html.fromstring(response.content)
-
-        self.tree = tree
-
-
+        #self.download_img_etsy()
     def is_hand_made(self):
-
         pattern = "Hecho a mano"
         
-        if  self.tree.xpath(f'//text()[contains(.,"{pattern}")]'):
+        try:
+            self.driver.find_element(By.XPATH, f'//*[contains(text(), "{pattern}")]')
             self.isHM = True
-        else:
+        except NoSuchElementException:
+            # Si no se encuentra el elemento, establece isHM en False
             self.isHM = False
 
     def search_price(self):
 
-        price_elem = self.tree.xpath('//div[@data-selector="price-only"]/p[@class="wt-text-title-larger wt-mr-xs-1 "]')
+        xpath_condition_1 = '//div[@data-selector="price-only"]/p[@class="wt-text-title-larger wt-mr-xs-1 "]'
+        xpath_condition_2 = '//div[@data-selector="price-only"]/p[@class="wt-text-title-larger wt-mr-xs-1 wt-text-slime"]'
+        
+        try:
+            price_elem = self.driver.find_element(By.XPATH,xpath_condition_1)
+        except:
+            price_elem = self.driver.find_element(By.XPATH,xpath_condition_2)
 
         if price_elem:
-            
-            cadena_limpia = ''.join(c for c in price_elem[0].text_content().split(":")[1] if c.isdigit() or c in {',', '.'})
-
-            cadena_limpia = cadena_limpia.replace(',', '.')
-
-            self.price =  float(cadena_limpia)
+            cadena_limpia = self.extract_price_from_element(price_elem.text)
+            self.price = float(cadena_limpia)
         else:
+            self.price = False
 
-            price_elem = self.tree.xpath('//div[@data-selector="price-only"]/p[@class="wt-text-title-larger wt-mr-xs-1 wt-text-slime"]')
-
-            if price_elem:
-                
-                cadena_limpia = ''.join(c for c in price_elem[0].text_content().split(":")[1] if c.isdigit() or c in {',', '.'})
-
-                cadena_limpia = cadena_limpia.replace(',', '.')
-
-                self.price = float(cadena_limpia)
-            else:
-                self.price = False
-
-
+    def extract_price_from_element(self, element):
+        cadena_limpia = ''.join(c for c in element.strip().split(":")[1] if c.isdigit() or c in {',', '.'})
+        return cadena_limpia.replace(',', '.')
+    
     def search_Shipping_Costs(self):
 
-        price_elem = self.tree.xpath('//div[@class="wt-ml-xs-1"]/span[@class="currency-value"]/text()')
-
-        if price_elem:
+        try:
+            price_elem = self.driver.find_element(By.XPATH,'//div[@class="wt-ml-xs-1"]/span[@class="currency-value"]/text()')
             
             cadena_limpia = ''.join(c for c in price_elem[0].strip() if c.isdigit() or c in {',', '.'})
 
             cadena_limpia = cadena_limpia.replace(',', '.')
 
             self.shippingCosts =  float(cadena_limpia)
-        else:
-
+        except:
             self.shippingCosts =  False
     
     def search_rating(self):
-
-        link_element = self.tree.xpath('//a[@class="wt-text-link-no-underline review-stars-text-decoration-none" and @href="#reviews"]')
-
-        if link_element:
-            span_element = link_element[0].xpath('.//span[@class="wt-screen-reader-only"]')
-            if span_element:
-                stars_text = span_element[0].text
-                pat = r"[0-9](\.[0-9]+)?"
-                self.rating = float(re.search(pat, stars_text).group(0))
+        
+        link_element = self.driver.find_element(By.XPATH,'//a[@class="wt-text-link-no-underline review-stars-text-decoration-none" and @href="#reviews"]')
+        #link_element = self.tree.xpath('//a[@class="wt-text-link-no-underline review-stars-text-decoration-none" and @href="#reviews"]')
+        pat = r"[0-9](\.[0-9]+)?"
+        self.rating = float(re.search(pat, link_element.text).group(0))
 
     def search_nReviews(self):
         
-        reviews_elem = self.tree.xpath('//span[@class="wt-badge wt-badge--statusInformational wt-ml-xs-2"]')
-
-        if reviews_elem:
-            self.nReviews = int(reviews_elem[0].text)
-        else:
+        try:
+            reviews_elem = self.driver.find_element(By.XPATH,'//span[@class="wt-badge wt-badge--statusInformational wt-ml-xs-2"]')
+            self.nReviews = reviews_elem.text
+        except:
             self.nReviews = False
+
     def search_nShopRating(self):
         
-        pattern = r'\s*([\d,]+)\s*rese.*as de la tienda\s*'
-        matches = re.search(pattern, str(self.content), re.DOTALL | re.IGNORECASE)
-
-        if matches:
-            reviews_text = matches.group(1).strip()
-            self.nShopRating = reviews_text
-        else:
+        try:
+            reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="wt-display-flex-xs wt-align-items-center"]')
+            self.nShopRating = int(reviews_elem.text.split()[0])
+        except:
             self.nShopRating = False
-
 
     def search_description(self):
 
-        self.description = self.tree.xpath('//div[@class="wt-mb-xs-1"]/h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text_content().strip()
+        self.description = self.driver.find_elements(By.XPATH,'//div[@class="wt-mb-xs-1"]/h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text
 
     def download_img_etsy(self):
         
