@@ -2,7 +2,10 @@ import web_scrapping_etsy as e
 import web_scrapping_aliexpress as ali
 from web_scrapping_etsy import etsyP
 import image_compare as ic
+import time
 
+
+t = time.time
 t = etsyP("https://www.etsy.com/es/listing/1535853173/estatua-de-la-aparicion-de-zoro-ashura")
 
 print(f"Está hecho a mano? {t.isHM}")
@@ -21,3 +24,5 @@ links = ali.get_url_products(t.description)
 aliPList = ali.getInfoProducts(links,t)
 for a in aliPList:
     a.print()
+
+print(time.time - t)

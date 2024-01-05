@@ -64,6 +64,7 @@ class etsyP:
         self.download_img_etsy()
 
         self.driver.quit()
+
     def is_hand_made(self):
         pattern = "Hecho a mano"
         
@@ -125,7 +126,7 @@ class etsyP:
     def search_nShopRating(self):
         
         try:
-            reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="wt-display-flex-xs wt-align-items-center"]')
+            reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="reviews__shop-info"]')
             self.nShopRating = int(reviews_elem.text.split()[0])
         except:
             self.nShopRating = False
@@ -140,6 +141,7 @@ class etsyP:
 
         urls_imagenes = [imagen.get_attribute("src") for imagen in imagenes]
 
+        urls_imagenes = urls_imagenes[:len(urls_imagenes)//2]
         i = 0
         for url in urls_imagenes:
             urllib.request.urlretrieve(url, f'./imgcacheetsy/img{i}.jpg')
