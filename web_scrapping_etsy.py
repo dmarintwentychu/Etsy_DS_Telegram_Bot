@@ -62,7 +62,7 @@ class etsyP:
         self.search_nReviews()
         self.search_nShopRating()
         self.search_description()
-        #self.download_img_etsy()
+        self.download_img_etsy()
     def is_hand_made(self):
         pattern = "Hecho a mano"
         
@@ -134,13 +134,14 @@ class etsyP:
         self.description = self.driver.find_elements(By.XPATH,'//div[@class="wt-mb-xs-1"]/h1[@class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"]')[0].text
 
     def download_img_etsy(self):
-        
-        urls_imagenes = self.tree.xpath('//div[@id="photos"]//img/@src')
-        urls_imagenes = urls_imagenes[:urls_imagenes.index('')]
+
+        imagenes = self.driver.find_elements(By.XPATH, '//div[@id="photos"]//img')
+
+        urls_imagenes = [imagen.get_attribute("src") for imagen in imagenes]
 
         i = 0
         for url in urls_imagenes:
             urllib.request.urlretrieve(url, f'./imgcacheetsy/img{i}.jpg')
-            i+=1
+            i += 1
+
         self.imgs = len(urls_imagenes)
-        
