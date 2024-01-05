@@ -10,7 +10,6 @@ from selenium.common.exceptions import TimeoutException
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from time import sleep
 
 class etsyP:
 
@@ -63,6 +62,8 @@ class etsyP:
         self.search_nShopRating()
         self.search_description()
         self.download_img_etsy()
+
+        self.driver.quit()
     def is_hand_made(self):
         pattern = "Hecho a mano"
         
