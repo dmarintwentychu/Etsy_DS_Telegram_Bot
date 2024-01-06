@@ -10,6 +10,7 @@ from selenium.common.exceptions import TimeoutException
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from time import sleep
 
 class etsyP:
 
@@ -31,17 +32,17 @@ class etsyP:
     def __init__(self, url):
         self.url = url
                 
-        options = webdriver.ChromeOptions()
-        options.add_argument('---incognito')
-        options.add_argument('--disable-gpu')
-        #options.add_argument('--headless')
 
-        self.driver = webdriver.Chrome(options=options)
-
-        wait = WebDriverWait(self.driver, 10)
         block = True
         while(block):
             try:
+                options = webdriver.ChromeOptions()
+                options.add_argument('--disable-gpu')
+                #options.add_argument('--headless')
+
+                self.driver = webdriver.Chrome(options=options)
+
+                wait = WebDriverWait(self.driver, 10)
                 self.driver.get(self.url)
                 self.driver.minimize_window()
                 self.driver.implicitly_wait(4)
@@ -52,6 +53,8 @@ class etsyP:
                 block = False
             except TimeoutException:
                 print("No hay boton(?)")
+                self.driver.quit()
+
 
         self.is_hand_made()
         self.search_price()
