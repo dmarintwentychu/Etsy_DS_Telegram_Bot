@@ -130,8 +130,10 @@ class etsyP:
         
         try:
             reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="reviews__shop-info"]')
-            self.nShopRating = int(reviews_elem.text.split()[0])
-        except:
+            self.nShopRating = float(reviews_elem.text.split()[0])
+        
+        except NoSuchElementException:
+        
             self.nShopRating = False
 
     def search_description(self):
