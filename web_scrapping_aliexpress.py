@@ -26,8 +26,6 @@ class aliP:
     def __init__(self, url):
         self.url = url
         
-        self.download_img_ali(url)
-
     def download_img_ali(self,url):
         response = requests.get(url)
 
@@ -115,14 +113,25 @@ class aliP:
         print(f"Descripción del Producto: \n {self.description}")
         print(f"url de aliexpress: {self.url}")
         print("------------------------------------")
-
+    def message(self):
+        message =(
+f'''Gastos de envio: {self.shippingCosts}
+Precio: {self.price}
+Precio Total {self.totalPriece}
+Rating: {self.rating}
+Numero de Reseñas del producto: {self.nReviews}
+Descripción del Producto: \n {self.description}
+url de aliexpress: {self.url}''')
+        
+        return message
 
 def getInfoProducts(links,etsy):
     
     aliPList = []
     for l in links:
         ali = aliP(l)
-
+        ali.download_img_ali()
+        
         if getMatchProducts() > 1:
             aliPList.append(ali)
             aliPList[-1].get_values()
@@ -130,6 +139,18 @@ def getInfoProducts(links,etsy):
 
     ic.deleteall("./imgcacheetsy")
 
+    if len(aliPList) == 0:
+        if len(links >= 5):
+            for l in links[:5]:
+                ali = aliP(l)
+                aliPList.append(ali)
+                aliPList[-1].get_values()
+        else:
+            for l in links:
+                ali = aliP(l)
+                aliPList.append(ali)
+                aliPList[-1].get_values()
+ 
     print(len(aliPList))
 
     return aliPList

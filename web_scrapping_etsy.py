@@ -12,6 +12,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 
+import schedule
+import json
+
 class etsyP:
 
     url = ""
@@ -29,7 +32,7 @@ class etsyP:
     ImgMatches = 0
     
 
-    def __init__(self, url):
+    def __init__(self, url,t=0):
         self.url = url
                 
 
@@ -42,29 +45,33 @@ class etsyP:
 
                 self.driver = webdriver.Chrome(options=options)
 
-                wait = WebDriverWait(self.driver, 10)
+                wait = WebDriverWait(self.driver, 5)
                 self.driver.get(self.url)
                 self.driver.minimize_window()
-                self.driver.implicitly_wait(4)
+                self.driver.implicitly_wait(2)
                 self.driver.refresh()
-                self.driver.implicitly_wait(10)
+                self.driver.implicitly_wait(2)
                 boton = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@class='wt-btn wt-btn--filled wt-mb-xs-0']")))
                 boton.click()
                 block = False
             except TimeoutException:
-                print("No hay boton(?)")
+                print("Captcha 😡")
                 self.driver.quit()
 
-
-        self.is_hand_made()
-        self.search_price()
-        self.search_Shipping_Costs()
-        self.totalPriece = self.price + self.shippingCosts
-        self.search_rating()
-        self.search_nReviews()
-        self.search_nShopRating()
-        self.search_description()
-        self.download_img_etsy()
+        if t == 0:
+            self.is_hand_made()
+            self.search_price()
+            self.search_Shipping_Costs()
+            self.totalPriece = self.price + self.shippingCosts
+            self.search_rating()
+            self.search_nReviews()
+            self.search_nShopRating()
+            self.search_description()
+            self.download_img_etsy()
+        else:
+            self.search_price()
+            self.search_Shipping_Costs()
+            self.totalPriece = self.price + self.shippingCosts
 
         self.driver.quit()
 
@@ -130,7 +137,7 @@ class etsyP:
         
         try:
             reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="reviews__shop-info"]')
-            self.nShopRating = int(reviews_elem.text.split()[0])
+            self.nShopRating = reviews_elem.text.split()[0]
         except:
             self.nShopRating = False
 
@@ -151,3 +158,83 @@ class etsyP:
             i += 1
 
         self.imgs = len(urls_imagenes)
+
+
+#Añade un nuevo producto
+def trackNewProduct(url):
+
+    p = etsyP(url,1)
+
+    with open('./products.json',"r+") as f:
+        
+        z = json.load(f)
+
+        dictionary = {f"{url}" : p.totalPriece}
+
+        z.update(dictionary)
+
+        f.seek(0)
+        json.dump(z,f,indent=2)
+        f.truncate()
+
+#0:No cambia
+#1:Ha bajado
+#2:Ha subido
+def trackProduct(url,f,z):
+    
+    res = 0
+    lastPrice = z[url]
+    p = etsyP(url,1)
+
+    if lastPrice < p.totalPriece:
+        res = 1
+    elif lastPrice > p.totalPriece:
+        res = 2
+    else:
+        res = 0
+    z[url] = p.totalPriece
+
+    f.seek(0)
+    f.truncate()
+    json.dump(z,f,indent=2)
+
+
+    return (res,p.totalPriece)
+
+def deleteJSON():
+    with open('./archivo.json', 'w') as f:
+        f.write('{}')
+
+
+#Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha suvbido, bajado o sigue igual
+def trackListProducts():
+
+    lowered = {}
+    raised = {}
+    equal = {}
+
+    with open('./products.json',"r+") as f:
+        
+        z = json.load(f)
+        keys = list(z.keys())
+        for url in keys:
+            (r,p) = trackProduct(url,f,z)
+            
+            if r == 0:
+                equal[url] = p
+            elif r == 1:
+                lowered[url] = p
+            else:
+                equal[url] = p
+
+    return (lowered, raised, equal)
+
+
+
+#Esto estaría en el main
+#def job():
+#    print("Ejecutando la tarea...")
+#    (lowered, raised, equal) = trackListProducts()
+    
+#schedule.every().hour.do(job)
+
