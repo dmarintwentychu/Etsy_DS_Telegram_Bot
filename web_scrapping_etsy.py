@@ -137,7 +137,7 @@ class etsyP:
         
         try:
             reviews_elem = self.driver.find_element(By.XPATH,'//div[@class="reviews__shop-info"]')
-            self.nShopRating = reviews_elem.text.split()[0]
+            self.nShopRating = float(reviews_elem.text.split()[0])
         except:
             self.nShopRating = False
 
