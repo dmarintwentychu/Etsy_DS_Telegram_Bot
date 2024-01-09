@@ -11,6 +11,7 @@ import urllib.request
 import image_compare as ic
 import spacy
 
+
 class aliP:
 
     url = ""
@@ -22,7 +23,7 @@ class aliP:
     nReviews = 0
     description = ""
     imgs = 0
-
+    portrait = 0
     def __init__(self, url):
         self.url = url
         
@@ -39,13 +40,15 @@ class aliP:
                          .replace("\"","")
                          .split(","))
         urls_imagenes = [url_imagene.strip() for url_imagene in urls_imagenes]
-        
+
         i = 0
         for urll in urls_imagenes:
             urllib.request.urlretrieve(urll, f'./imgcacheali/img{i}.jpg')
             i+=1
         self.imgs = len(urls_imagenes)
-    
+        self.portrait = urls_imagenes[0]
+
+
     def get_values(self):
         
         options = webdriver.ChromeOptions()
@@ -130,7 +133,7 @@ def getInfoProducts(links,etsy):
     aliPList = []
     for l in links:
         ali = aliP(l)
-        ali.download_img_ali()
+        ali.download_img_ali(ali.url)
         
         if getMatchProducts() > 1:
             aliPList.append(ali)

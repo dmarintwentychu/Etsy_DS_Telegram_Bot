@@ -230,10 +230,3 @@ def trackListProducts():
 
 
 
-#Esto estaría en el main
-#def job():
-#    print("Ejecutando la tarea...")
-#    (lowered, raised, equal) = trackListProducts()
-    
-#schedule.every().hour.do(job)
-
