@@ -52,7 +52,6 @@ El objeto tiene como descripcion:
     bot.send_message(user_id, mensaje)
     
     
-    
 
 @bot.message_handler(commands=["start"])
 def comandos(message):
