@@ -1,13 +1,15 @@
 from config import *
 import telebot
 from web_scrapping_etsy import etsyP 
+import web_scrapping_aliexpress as ali 
 
 bot = telebot.TeleBot("6803354093:AAH9cdZtNjcNyKIECnGb2SR_Earm97PIyAE")
 urlGuardada = False
+objeto = 0
 
 
 def guardar_url(user_id, url):
-    global urlGuardada
+    global urlGuardada, objeto
     objeto = etsyP(url)
     urlGuardada = True
     caracteristicas(user_id,objeto)
@@ -69,12 +71,16 @@ def comando_guardar_url(message):
 
 @bot.message_handler(commands=["respuesta"])
 def comando_guardar_url(message):
-    global urlGuardada
+    global urlGuardada, objeto
     # Obtener la respuesta de la pregunta
     respuesta = message.text.replace("/respuesta ", "")
     if(urlGuardada):
         if(respuesta == 'si'):
             bot.send_message(message.from_user.id, 'Buscando en AliExpress...')
+            links = ali.get_url_products(objeto.description)
+            aliPList = ali.getInfoProducts(links,objeto)
+            for a in aliPList : 
+                bot.send_message(message.from_user.id, a.message())
         else:
             bot.send_message(message.from_user.id, 'Gracias por usarme.')
     else:
