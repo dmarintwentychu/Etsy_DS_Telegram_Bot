@@ -22,6 +22,7 @@ class aliP:
     nReviews = 0
     description = ""
     imgs = 0
+    portrait = 0
 
     def __init__(self, url):
         self.url = url
@@ -45,6 +46,7 @@ class aliP:
             urllib.request.urlretrieve(urll, f'./imgcacheali/img{i}.jpg')
             i+=1
         self.imgs = len(urls_imagenes)
+        self.portrait = urls_imagenes[0]
     
     def get_values(self):
         

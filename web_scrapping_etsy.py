@@ -205,7 +205,7 @@ def deleteJSON():
         f.write('{}')
 
 
-#Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha suvbido, bajado o sigue igual
+#Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha subido, bajado o sigue igual
 def trackListProducts():
 
     lowered = {}
@@ -230,10 +230,5 @@ def trackListProducts():
 
 
 
-#Esto estaría en el main
-#def job():
-#    print("Ejecutando la tarea...")
-#    (lowered, raised, equal) = trackListProducts()
-    
-#schedule.every().hour.do(job)
+
 
