@@ -65,19 +65,23 @@ def comando_guardar_url(message):
     # Guardar la URL utilizando la función
     bot.reply_to(message, "Empezando Script... Esto puede llevar un momento.")
     guardar_url(message.from_user.id, url)
-    bot.send_message(message.from_user.id, '¿Quieres que busque en AliExpress? (/respuesta si/no)')
+    bot.send_message(message.from_user.id, '¿Quieres que busque en AliExpress? ( /r [si/no] )')
 
 
-@bot.message_handler(commands=["respuesta"])
+@bot.message_handler(commands=["r"])
 def comando_guardar_url(message):
     global urlGuardada, objeto
     # Obtener la respuesta de la pregunta
-    respuesta = message.text.replace("/respuesta ", "")
+    respuesta = message.text.replace("/r ", "")
     if(urlGuardada):
         if(respuesta == 'si'):
             bot.send_message(message.from_user.id, 'Buscando en AliExpress...')
             links = ali.get_url_products(objeto.description)
-            aliPList = ali.getInfoProducts(links,objeto)
+            aliPList,match = ali.getInfoProducts(links,objeto)
+            if (match):
+                bot.send_message(message.from_user.id, 'Se ha encontrado un o mas resultados compatibles:')
+            else:
+                bot.send_message(message.from_user.id, 'No se han encontrado resultados compatibles\nMostrando los 5 resultados obtenidos por AliExpress...')
             for a in aliPList : 
                 bot.send_message(message.from_user.id, a.message())
         else:
