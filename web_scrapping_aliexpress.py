@@ -24,6 +24,7 @@ class aliP:
     description = ""
     imgs = 0
     portrait = 0
+
     def __init__(self, url):
         self.url = url
         
@@ -49,6 +50,7 @@ class aliP:
         self.portrait = urls_imagenes[0]
 
 
+    
     def get_values(self):
         
         options = webdriver.ChromeOptions()
@@ -131,11 +133,13 @@ url de aliexpress: {self.url}''')
 def getInfoProducts(links,etsy):
     
     aliPList = []
+    match = 0
     for l in links:
         ali = aliP(l)
         ali.download_img_ali(ali.url)
         
         if getMatchProducts() > 1:
+            match=1
             aliPList.append(ali)
             aliPList[-1].get_values()
         ic.deleteall("./imgcacheali")
@@ -143,7 +147,7 @@ def getInfoProducts(links,etsy):
     ic.deleteall("./imgcacheetsy")
 
     if len(aliPList) == 0:
-        if len(links >= 5):
+        if len(links) >= 5:
             for l in links[:5]:
                 ali = aliP(l)
                 aliPList.append(ali)
@@ -156,7 +160,7 @@ def getInfoProducts(links,etsy):
  
     print(len(aliPList))
 
-    return aliPList
+    return (aliPList,match)
 
 def getMatchProducts():
 

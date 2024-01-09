@@ -205,7 +205,7 @@ def deleteJSON():
         f.write('{}')
 
 
-#Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha suvbido, bajado o sigue igual
+#Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha subido, bajado o sigue igual
 def trackListProducts():
 
     lowered = {}
@@ -227,6 +227,8 @@ def trackListProducts():
                 equal[url] = p
 
     return (lowered, raised, equal)
+
+
 
 
 
