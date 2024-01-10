@@ -120,7 +120,7 @@ def job():
         mensaje = mensaje + i +' '+ str(equal[i][1])+ ' se mantiene en: '+ str(equal[i][0])+'\n'
     bot.send_message(5645490761, mensaje) 
     print('JOB TERMINANDO...')
-c
+
 
 
 
@@ -148,7 +148,7 @@ def comando_guardar_url(message):
             links = ali.get_url_products(objeto.description)
             aliPList,match = ali.getInfoProducts(links,objeto)
             if (match):
-                bot.send_message(message.from_user.id, 'Se ha encontrado un o mas resultados compatibles:')
+                bot.send_message(message.from_user.id, 'Se ha encontrado uno o mas resultados compatibles:')
             else:
                 bot.send_message(message.from_user.id, 'No se han encontrado resultados compatibles\nMostrando los 5 resultados obtenidos por AliExpress...')
             for a in aliPList : 
