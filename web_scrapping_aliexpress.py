@@ -11,6 +11,7 @@ import urllib.request
 import image_compare as ic
 import spacy
 
+
 class aliP:
 
     url = ""
@@ -40,13 +41,15 @@ class aliP:
                          .replace("\"","")
                          .split(","))
         urls_imagenes = [url_imagene.strip() for url_imagene in urls_imagenes]
-        
+
         i = 0
         for urll in urls_imagenes:
             urllib.request.urlretrieve(urll, f'./imgcacheali/img{i}.jpg')
             i+=1
         self.imgs = len(urls_imagenes)
         self.portrait = urls_imagenes[0]
+
+
     
     def get_values(self):
         

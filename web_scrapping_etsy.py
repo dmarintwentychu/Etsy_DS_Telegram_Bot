@@ -71,6 +71,8 @@ class etsyP:
             self.search_price()
             self.search_Shipping_Costs()
             self.totalPriece = self.price + self.shippingCosts
+            self.search_description()
+
 
         self.driver.quit()
 
@@ -191,19 +193,28 @@ def trackProduct(url,f,z):
         res = 2
     else:
         res = 0
-    z[url] = p.totalPriece
+    z[url] = [p.totalPriece,p.description]
 
     f.seek(0)
     f.truncate()
     json.dump(z,f,indent=2)
 
 
-    return (res,p.totalPriece)
+    return (res,p.totalPriece,p.description)
 
 def deleteJSON():
     with open('./archivo.json', 'w') as f:
         f.write('{}')
 
+def deleteOne(key):
+    with open('archivo.json', 'r') as archivo:
+        data = json.load(archivo)
+
+    if key in data:
+        del data[key]
+
+    with open('archivo.json', 'w') as archivo:
+        json.dump(data, archivo, indent=2)
 
 #Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha subido, bajado o sigue igual
 def trackListProducts():
@@ -217,18 +228,14 @@ def trackListProducts():
         z = json.load(f)
         keys = list(z.keys())
         for url in keys:
-            (r,p) = trackProduct(url,f,z)
+            (r,p,d) = trackProduct(url,f,z)
             
             if r == 0:
-                equal[url] = p
+                equal[url] = [p,d]
             elif r == 1:
-                lowered[url] = p
+                lowered[url] = [p,d]
             else:
-                equal[url] = p
+                equal[url] = [p,d]
 
     return (lowered, raised, equal)
-
-
-
-
 

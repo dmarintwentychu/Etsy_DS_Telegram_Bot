@@ -99,7 +99,7 @@ def comando_borrarSeguimiento(message):
 
     
 def job(id):
-    print('Empezando job...')
+    
     mensaje = ''
     bot.send_message(id, 'Ejecutando la tarea...')
     (lowered, raised, equal) = etsy.trackListProducts()
@@ -115,7 +115,7 @@ def job(id):
     for i in equal.keys() : 
         mensaje = mensaje + i + 'se mantiene en: '+ str(equal[i])+'\n'
     bot.send_message(id, mensaje) 
-    print('Acabando job...')
+    
 
 
 
