@@ -184,7 +184,7 @@ def trackNewProduct(url):
 def trackProduct(url,f,z):
     
     res = 0
-    lastPrice = z[url]
+    lastPrice = z[url][0]
     p = etsyP(url,1)
 
     if lastPrice < p.totalPriece:

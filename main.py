@@ -68,18 +68,19 @@ def comandos(message):
     
 @bot.message_handler(commands=['hilos'])
 def handle_start(message):
-  schedule.every(1).minutes.do(job,message.from_user.id)
+  
   tarea_thread = threading.Thread(target=iniciar_planificador)
   tarea_thread.start()
 
 def iniciar_planificador():
+    schedule.every(20).seconds.do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
         
 @bot.message_handler(commands=["t"])
 def comando_seguimiento(message):
-    
+    print(message.from_user.id)
     # Comparar precios de una url 
     url = message.text.replace("/t ", "")
     etsy.trackNewProduct(url)
@@ -100,24 +101,25 @@ def comando_borrarSeguimiento(message):
 
 
     
-def job(id):
+def job():
     
     mensaje = ''
-    bot.send_message(id, 'Ejecutando la tarea...')
+    print('JOB EMPEZANDO...')
+    bot.send_message(5645490761, 'Ejecutando la tarea...')
     (lowered, raised, equal) = etsy.trackListProducts()
     mensaje = 'Estos son los productos que han bajado de precio:\n'
     for i in lowered.keys() : 
-        mensaje = mensaje + i + str(lowered[i][1]) + 'ha bajado a: '+ str(lowered[i][0])+'\n'
-    bot.send_message(id, mensaje)     
+        mensaje = mensaje + i +' '+ str(lowered[i][1]) + ' ha bajado a: '+ str(lowered[i][0])+'\n'
+    bot.send_message(5645490761, mensaje)     
     mensaje = 'Estos son los productos que han subido de precio:\n'
     for i in raised.keys() : 
-        mensaje = mensaje + i + 'ha subido a: '+ str(raised[i])+'\n'
-    bot.send_message(id, mensaje)     
+        mensaje = mensaje + i + ' '+ str(raised[i][1])+ ' ha subido a: '+ str(raised[i][0])+'\n'
+    bot.send_message(5645490761, mensaje)     
     mensaje = 'Estos productos mantienen su precio:\n'
     for i in equal.keys() : 
-        mensaje = mensaje + i + 'se mantiene en: '+ str(equal[i])+'\n'
-    bot.send_message(id, mensaje) 
-    
+        mensaje = mensaje + i +' '+ str(equal[i][1])+ ' se mantiene en: '+ str(equal[i][0])+'\n'
+    bot.send_message(5645490761, mensaje) 
+    print('JOB TERMINANDO...')
 
 
 
