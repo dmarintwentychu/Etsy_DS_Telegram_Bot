@@ -7,14 +7,15 @@ import requests
 import subprocess
 import schedule
 import time
+import threading
 
 bot = telebot.TeleBot("6803354093:AAH9cdZtNjcNyKIECnGb2SR_Earm97PIyAE")
 urlGuardada = False
 objeto = 0
-id = 0
+
 
 def guardar_url(user_id, url):
-    global urlGuardada, objeto, id
+    global urlGuardada, objeto
     objeto = etsyP(url)
     urlGuardada = True
 
@@ -61,11 +62,21 @@ El objeto tiene como descripcion:
 
 @bot.message_handler(commands=["start"])
 def comandos(message):
-    global id
-    id = message.from_user.id
+    
+   
     bot.reply_to(message, "Hola, ¿cómo estas?")
     
+@bot.message_handler(commands=['hilos'])
+def handle_start(message):
+  schedule.every(1).minutes.do(job,message.from_user.id)
+  tarea_thread = threading.Thread(target=iniciar_planificador)
+  tarea_thread.start()
 
+def iniciar_planificador():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+        
 @bot.message_handler(commands=["t"])
 def comando_seguimiento(message):
     
@@ -87,15 +98,14 @@ def comando_borrarSeguimiento(message):
 
 
     
-def job():
-    global id
+def job(id):
     print('Empezando job...')
     mensaje = ''
     bot.send_message(id, 'Ejecutando la tarea...')
     (lowered, raised, equal) = etsy.trackListProducts()
     mensaje = 'Estos son los productos que han bajado de precio:\n'
     for i in lowered.keys() : 
-        mensaje = mensaje + i + 'ha bajado a: '+ str(lowered[i])+'\n'
+        mensaje = mensaje + i + str(lowered[i][1]) + 'ha bajado a: '+ str(lowered[i][0])+'\n'
     bot.send_message(id, mensaje)     
     mensaje = 'Estos son los productos que han subido de precio:\n'
     for i in raised.keys() : 
