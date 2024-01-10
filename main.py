@@ -87,13 +87,15 @@ def comando_seguimiento(message):
 @bot.message_handler(commands=["dall"])
 def comando_borrarSeguimiento(message):
     # Guardamos el mensaje
-    mensaje = message.text.replace("/dall ", "")
+    mensaje = message.text.replace("/dall", "").strip()
+    print(mensaje)
     if (mensaje==''):
         bot.reply_to(message, "¿Seguro que quieres borrar todos los seguimientos? ( /dall [si/no])")
     elif(mensaje=='si'):
         etsy.deleteJSON()
+        bot.send_message(message.from_user.id, 'Se han borrado los datos')
     else:
-         bot.send_message(message.from_user.id, 'No se han borrado los datos')
+        bot.send_message(message.from_user.id, 'No se han borrado los datos')
 
 
 

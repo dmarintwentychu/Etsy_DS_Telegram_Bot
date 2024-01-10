@@ -48,8 +48,8 @@ class etsyP:
                 self.driver.get(self.url)
                 self.driver.minimize_window()
                 self.driver.implicitly_wait(2)
-                self.driver.refresh()
-                self.driver.implicitly_wait(2)
+                #self.driver.refresh()
+                #self.driver.implicitly_wait(2)
                 boton = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@class='wt-btn wt-btn--filled wt-mb-xs-0']")))
                 boton.click()
                 block = False
@@ -170,7 +170,7 @@ def trackNewProduct(url):
         
         z = json.load(f)
 
-        dictionary = {f"{url}" : p.totalPriece}
+        dictionary = {f"{url}" : [p.totalPriece,p.description]}
 
         z.update(dictionary)
 
@@ -203,7 +203,7 @@ def trackProduct(url,f,z):
     return (res,p.totalPriece,p.description)
 
 def deleteJSON():
-    with open('./archivo.json', 'w') as f:
+    with open('./products.json', 'w') as f:
         f.write('{}')
 
 def deleteOne(key):
