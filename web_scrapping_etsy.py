@@ -170,7 +170,7 @@ def trackNewProduct(url):
         
         z = json.load(f)
 
-        dictionary = {f"{url}" : [p.totalPriece,p.description]}
+        dictionary = {f"{url}" : [[p.totalPriece,p.description],p.description]}
 
         z.update(dictionary)
 
@@ -207,13 +207,13 @@ def deleteJSON():
         f.write('{}')
 
 def deleteOne(key):
-    with open('archivo.json', 'r') as archivo:
+    with open('products.json', 'r') as archivo:
         data = json.load(archivo)
 
     if key in data:
         del data[key]
 
-    with open('archivo.json', 'w') as archivo:
+    with open('products.json', 'w') as archivo:
         json.dump(data, archivo, indent=2)
 
 #Mira entre todos los productos añadidos y devuelve tres diccionarios diciendo si ha subido, bajado o sigue igual
@@ -238,4 +238,7 @@ def trackListProducts():
                 equal[url] = [p,d]
 
     return (lowered, raised, equal)
+
+
+
 
