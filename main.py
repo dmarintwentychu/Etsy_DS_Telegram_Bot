@@ -7,14 +7,15 @@ import requests
 import subprocess
 import schedule
 import time
+import threading
 
 bot = telebot.TeleBot("6803354093:AAH9cdZtNjcNyKIECnGb2SR_Earm97PIyAE")
 urlGuardada = False
 objeto = 0
-id = 0
+
 
 def guardar_url(user_id, url):
-    global urlGuardada, objeto, id
+    global urlGuardada, objeto
     objeto = etsyP(url)
     urlGuardada = True
 
@@ -61,11 +62,21 @@ El objeto tiene como descripcion:
 
 @bot.message_handler(commands=["start"])
 def comandos(message):
-    global id
-    id = message.from_user.id
+    
+   
     bot.reply_to(message, "Hola, ¿cómo estas?")
     
+@bot.message_handler(commands=['hilos'])
+def handle_start(message):
+  schedule.every(1).minutes.do(job,message.from_user.id)
+  tarea_thread = threading.Thread(target=iniciar_planificador)
+  tarea_thread.start()
 
+def iniciar_planificador():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+        
 @bot.message_handler(commands=["t"])
 def comando_seguimiento(message):
     
@@ -76,26 +87,27 @@ def comando_seguimiento(message):
 @bot.message_handler(commands=["dall"])
 def comando_borrarSeguimiento(message):
     # Guardamos el mensaje
-    mensaje = message.text.replace("/dall ", "")
+    mensaje = message.text.replace("/dall", "").strip()
+    print(mensaje)
     if (mensaje==''):
         bot.reply_to(message, "¿Seguro que quieres borrar todos los seguimientos? ( /dall [si/no])")
     elif(mensaje=='si'):
         etsy.deleteJSON()
+        bot.send_message(message.from_user.id, 'Se han borrado los datos')
     else:
-         bot.send_message(message.from_user.id, 'No se han borrado los datos')
+        bot.send_message(message.from_user.id, 'No se han borrado los datos')
 
 
 
     
-def job():
-    global id
-    print('Empezando job...')
+def job(id):
+    
     mensaje = ''
     bot.send_message(id, 'Ejecutando la tarea...')
     (lowered, raised, equal) = etsy.trackListProducts()
     mensaje = 'Estos son los productos que han bajado de precio:\n'
     for i in lowered.keys() : 
-        mensaje = mensaje + i + 'ha bajado a: '+ str(lowered[i])+'\n'
+        mensaje = mensaje + i + str(lowered[i][1]) + 'ha bajado a: '+ str(lowered[i][0])+'\n'
     bot.send_message(id, mensaje)     
     mensaje = 'Estos son los productos que han subido de precio:\n'
     for i in raised.keys() : 
@@ -105,7 +117,7 @@ def job():
     for i in equal.keys() : 
         mensaje = mensaje + i + 'se mantiene en: '+ str(equal[i])+'\n'
     bot.send_message(id, mensaje) 
-    print('Acabando job...')
+    
 
 
 
