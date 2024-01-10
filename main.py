@@ -73,7 +73,7 @@ def handle_start(message):
   tarea_thread.start()
 
 def iniciar_planificador():
-    schedule.every(20).seconds.do(job)
+    schedule.every(4).hours.do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -120,7 +120,7 @@ def job():
         mensaje = mensaje + i +' '+ str(equal[i][1])+ ' se mantiene en: '+ str(equal[i][0])+'\n'
     bot.send_message(5645490761, mensaje) 
     print('JOB TERMINANDO...')
-
+c
 
 
 
